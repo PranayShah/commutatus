@@ -1,0 +1,21 @@
+{
+  "name": "commutatus",
+  "version": "1.0.0",
+  "description": "Basecamp-slack integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pranay Shah",
+  "license": "ISC",
+  "dependencies": {
+    "@slack/client": "^3.16.0",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.0",
+    "express-session": "1.15.6",
+    "morgan": "^1.9.0",
+    "passport": "^0.4.0",
+    "passport-37signals": "^1.0.0",
+    "serverless-http": "^1.5.3"
+  }
+}

@@ -91,6 +91,8 @@ req.end();*/
 });
 
 app.post('/notif', function(reqRelay, resRelay) {
+  console.log(reqRelay);
+  console.log('**',reqRelay.body.kind);
   const options = {
     hostname: 'hooks.slack.com',
     port: 80,
@@ -106,8 +108,9 @@ app.post('/notif', function(reqRelay, resRelay) {
     if (err) {
         console.log('Error:', err);
     } else {
+       resRelay.send({status: 200})
+
         console.log('Message sent: ', res);
-        resRelay.send({status: 200})
     }
    });
   } else {

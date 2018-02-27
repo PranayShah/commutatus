@@ -59,10 +59,35 @@ app.get('/auth/37signals',
   passport.authenticate('37signals'));
 
 app.get('/auth/37signals/callback', 
-  passport.authenticate('37signals', { failureRedirect: '/login' }),
+  passport.authenticate('37signals', { failureRedirect: '/dev' }),
   function(req, res) {
+    res.sendStatus(200);
   });
 
+const getAuthorization = res => {
+    const basecamp_auth = {
+      "text": "You need to authorise basecamp",
+      "channel": "C061EG9SL",
+      "attachments": [
+          {
+              "fallback": "You need to try again after authorizing yourself: https://launchpad.37signals.com/authorization/new?client_id=7fbcda1ca5ec67e91c22cd332896d29cbe8ca5f7&redirect_uri=https%3A%2F%2F3txgz0knfb.execute-api.us-east-1.amazonaws.com%2Fdev%2Fauth%2F37signals%2Fcallback&type=web_server",
+              "color": "#36a64f",
+              "actions": [
+                  {
+                      "type": "button",
+                      "text": "Authorise",
+                      "style": "good",
+                      "url": "https://launchpad.37signals.com/authorization/new?client_id=7fbcda1ca5ec67e91c22cd332896d29cbe8ca5f7&redirect_uri=https%3A%2F%2F3txgz0knfb.execute-api.us-east-1.amazonaws.com%2Fdev%2Fauth%2F37signals%2Fcallback&type=web_server"
+                  }
+              ]
+          }
+      ]
+  };
+  res.send(basecamp_auth);
+};
+app.post('/integrate', (req, res) => {
+    getAuthorization(res);
+});
 app.post('/add', function (reqRelay, resRelay) {
   const addToBaseCamp = function(token) {
     const options = {
@@ -90,7 +115,6 @@ app.post('/add', function (reqRelay, resRelay) {
     req.write(JSON.stringify({'content':reqRelay.body.text}));
     req.end();
   }
-  const getAuthorization = () => resRelay.send('You need to try again after authorizing yourself: https://launchpad.37signals.com/authorization/new?client_id=7fbcda1ca5ec67e91c22cd332896d29cbe8ca5f7&redirect_uri=https%3A%2F%2F3txgz0knfb.execute-api.us-east-1.amazonaws.com%2Fdev%2Fauth%2F37signals%2Fcallback&type=web_server');
   const params = {
     TableName: process.env.USERS_TABLE,
     Key: {
@@ -100,7 +124,7 @@ app.post('/add', function (reqRelay, resRelay) {
   dynamoDb.get(params, (error, result) => {
     if (error || !result || !result.Item.accessToken) {
       console.error("Error",error);
-      getAuthorization();
+      getAuthorization(resRelay);
     }
     else {
       addToBaseCamp(result.Item.accessToken);
